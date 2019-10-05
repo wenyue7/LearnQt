@@ -8,6 +8,7 @@
 2. pyInterface.py作为学习使用,是由ui文件转换而来,转换方法写在ui_run.sh里
 3. 可以使用pyqt,即支持图形界面时可以使用pyInterFaceWidget.py
 4. 无法使用pyqt,只有命令行时可以使用getInfo.py
+5. net_traffic.py是网友分享的程序,可单独使用,没有写到图形界面中
 
 pyqt的教程:
     https://www.tutorialspoint.com/pyqt/pyqt_signals_and_slots.htm
@@ -20,6 +21,8 @@ signalAndSlots程序来源:
     http://zetcode.com/gui/pyqt5/eventssignals/
 eventAndSignal程序来源:
     http://zetcode.com/gui/pyqt5/eventssignals/
+net_traffic.py程序来源:
+    http://www.py3study.com/Article/details/id/347.html
 
 函数方法说明:
 
