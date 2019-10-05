@@ -42,6 +42,12 @@ class Ui_MainWindow(object):
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
+        # My set
+        # 设置窗体无边框
+        # self.setWindowFlags(Qt.FramelessWindowHint)
+        # 设置背景透明
+        # self.setAttribute(Qt.WA_TranslucentBackground)
+        # 设置label颜色
         self.label.setStyleSheet("background-color:rgb(0, 255, 255, 255);color:rgb(255, 0, 255, 255)")
         self.label_2.setStyleSheet("background-color:rgb(255, 255, 0, 255);color:rgb(255, 0, 255, 255)")
         self.timer.start(200)
@@ -54,8 +60,8 @@ class Ui_MainWindow(object):
         self.label_2.setText(MemValue)
 
     def timeOut(self):
-        Cpuinfo = getInfo.getCpuInfo()
-        Meminfo = getInfo.getMemInfo()
+        Cpuinfo = "CPU\n " + getInfo.getCpuInfo()
+        Meminfo = "Mem\n " + getInfo.getMemInfo()
         self.label.setText(Cpuinfo)
         self.label_2.setText(Meminfo)
 
