@@ -1,34 +1,34 @@
 # -*- coding: utf-8 -*-
 
-import sys,os
-from PyQt5 import Qt, QtCore, QtGui, QtWidgets
-from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget
+try:
+    import sys,os
+    from PyQt5 import Qt, QtCore, QtGui, QtWidgets
+    from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget
+except ImportError:
+    print('some modules not found!')
+    exit()
 
 sys.path.append(os.getcwd())
-import getInfo
+try:
+    import netinfo
+except ImportError:
+    print('netinfo module not found!')
+    exit()
 
-class MonitorCPUMem(QWidget):
+class NetTraffic(QWidget):
     def __init__(self):
         super().__init__()
         self.setupUi()
+        self.m_netTraffic = netinfo.NetTraffic()
 
     def setupUi(self):
-        # self.setObjectName("Monitor")
-        self.setWindowTitle("Monitor")
-        # 设置窗口为固定值
-        # self.setFixedSize(90, 30)
+        self.setWindowTitle("NetTraffic")
         # 设置窗口自适应
         self.setSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
-        # self.resize(150, 50)
         # 设置窗口
         self.setWindowFlags(Qt.Qt.FramelessWindowHint # 去掉窗体边框
-            # | QtCore.Qt.WindowMinimizeButtonHint # 使能最小化按钮
-            # | QtCore.Qt.WindowMaximizeButtonHint # 使能最大化按钮
-            # | QtCore.Qt.WindowCloseButtonHint # 使能关闭按钮
-            # | QtCore.Qt.WindowSystemMenuHint # 不知道有啥用
             | QtCore.Qt.Tool # 隐藏任务栏图标
             | QtCore.Qt.WindowStaysOnTopHint) # 窗口置顶
-        # self.setWindowFlags(QtCore.Qt.CustomizeWindowHint)
         # 设置背景透明
         self.setAttribute(Qt.Qt.WA_TranslucentBackground)
         # 去掉缝隙
@@ -38,23 +38,18 @@ class MonitorCPUMem(QWidget):
         
         # 添加组件
         self.gridLayout = QtWidgets.QGridLayout(self)
-        self.gridLayout.setObjectName("gridLayout")
         self.gridLayout.setSpacing(0)  #消除内部组件之间的缝隙
         self.gridLayout.setContentsMargins(0, 0, 0, 0)  #消除组件的边缘
         self.label = QtWidgets.QLabel(self)
-        # self.label.setText("")
-        # self.label.setObjectName("label")
         self.gridLayout.addWidget(self.label, 0, 0, 1, 1)
         self.label_2 = QtWidgets.QLabel(self)
-        # self.label_2.setText("")
-        # self.label_2.setObjectName("label_2")
-        self.gridLayout.addWidget(self.label_2, 0, 1, 1, 1)
+        self.gridLayout.addWidget(self.label_2, 1, 0, 1, 1)
 
         # 设置label颜色及固定大小
-        self.label.setStyleSheet("background-color:rgb(0, 255, 255, 255);color:rgb(255, 0, 255, 255);border:0px")
-        self.label_2.setStyleSheet("background-color:rgb(255, 255, 0, 255);color:rgb(255, 0, 255, 255);border:0px")
-        # self.label.setFixedSize(55, 40)
-        # self.label_2.setFixedSize(35, 40)
+        self.label.setStyleSheet("background-color:rgb(0, 155, 155, 255);color:rgb(255, 255, 255, 255);border:0px")
+        self.label_2.setStyleSheet("background-color:rgb(0, 100, 100, 255);color:rgb(255, 255, 255, 255);border:0px")
+        # self.label.setFixedSize(120, 20)
+        # self.label_2.setFixedSize(120, 20)
 
         # QTimer
         self.m_timer = QtCore.QTimer()
@@ -65,15 +60,20 @@ class MonitorCPUMem(QWidget):
         self.label.installEventFilter(self)
         self.label_2.installEventFilter(self)
 
-    def setDisValue(self, CPUValue, MemValue):
-        self.label.setText(CPUValue)
-        self.label_2.setText(MemValue)
-
     def timeOut(self):
-        Cpuinfo = "CPU\n " + getInfo.getCpuInfo()
-        Meminfo = "Mem\n " + getInfo.getMemInfo()
-        self.label.setText(Cpuinfo)
-        self.label_2.setText(Meminfo)
+        key_info, net_in, net_out, net_inSum, net_outSum = self.m_netTraffic.getRate()
+        if(int(net_inSum) > 1024):
+            net_inSum = float("%0.2f" % (net_inSum/1024))
+            download = "%-1s%s %s" % ("↓", str(net_inSum), "MB/s")
+        else:
+            download = "%-1s%s %s" % ("↓", str(net_inSum), "KB/s")
+        if(int(net_outSum) > 1024):
+            net_outSum = float("%0.2f" % (net_outSum/1024))
+            upload = "%-1s%s %s" % ("↑", str(net_outSum), "MB/s")
+        else:
+            upload = "%-1s%s %s" % ("↑", str(net_outSum), "KB/s")
+        self.label.setText(download)
+        self.label_2.setText(upload)
 
 # 以下事件函数未必在本程序中用到,放在这里只是作为学习
     def event(self, event):
@@ -111,7 +111,7 @@ class MonitorCPUMem(QWidget):
 
 def main():
     app = QApplication(sys.argv)
-    w = MonitorCPUMem()
+    w = NetTraffic()
     w.show()
     sys.exit(app.exec_())
 

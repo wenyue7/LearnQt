@@ -9,11 +9,10 @@ except ImportError:
 	exit()
 
 sys.path.append(os.getcwd())
-sys.path.append(os.getcwd() + "/modules")
 
 try:
-    import pyInterFaceWidget
-    import pyInterFaceNetWidget
+    import pyqtCpuMemWidget
+    import pyqtNetWidget
 except ImportError:
 	print('modules not found!')
 	exit()
@@ -40,8 +39,8 @@ class MWidget(QWidget):
         self.move(1300, 50)
         
         # 添加组件
-        self.widget_1 = pyInterFaceWidget.MonitorCPUMem()
-        self.widget_2 = pyInterFaceNetWidget.NetTraffic()
+        self.widget_1 = pyqtCpuMemWidget.MonitorCPUMem()
+        self.widget_2 = pyqtNetWidget.NetTraffic()
         self.gridLayout = QtWidgets.QGridLayout(self)
         self.gridLayout.setSpacing(0)  #消除添加组件之间的缝隙
         self.gridLayout.setContentsMargins(0, 0, 0, 0)
