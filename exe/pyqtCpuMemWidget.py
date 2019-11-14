@@ -16,8 +16,8 @@ except ImportError:
     exit()
 
 class MonitorCPUMem(QWidget):
-    def __init__(self):
-        super().__init__()
+    def __init__(self, parent = None):
+        super().__init__(parent)
         self.setupUi()
         self.m_CpuMemInfo = cpumeminfo.CpuMemInfo()
 
@@ -60,8 +60,8 @@ class MonitorCPUMem(QWidget):
         self.gridLayout.addWidget(self.label_2, 0, 1, 1, 1)
 
         # 设置label颜色及固定大小
-        self.label.setStyleSheet("background-color:rgb(0, 255, 255, 255);color:rgb(255, 0, 255, 255);border:0px")
-        self.label_2.setStyleSheet("background-color:rgb(255, 255, 0, 255);color:rgb(255, 0, 255, 255);border:0px")
+        self.label.setStyleSheet("background-color:rgb(0, 255, 255, 255);color:rgb(255, 0, 255, 255);border:0px;border-radius:6px")
+        self.label_2.setStyleSheet("background-color:rgb(255, 255, 0, 255);color:rgb(255, 0, 255, 255);border:0px;border-radius:6px")
 
         # QTimer
         self.m_timer = QtCore.QTimer()

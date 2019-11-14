@@ -16,8 +16,8 @@ except ImportError:
     exit()
 
 class NetTraffic(QWidget):
-    def __init__(self):
-        super().__init__()
+    def __init__(self, parent = None):
+        super().__init__(parent)
         self.setupUi()
         self.m_netTraffic = netinfo.NetTraffic()
 
@@ -46,8 +46,8 @@ class NetTraffic(QWidget):
         self.gridLayout.addWidget(self.label_2, 1, 0, 1, 1)
 
         # 设置label颜色及固定大小
-        self.label.setStyleSheet("background-color:rgb(0, 155, 155, 255);color:rgb(255, 255, 255, 255);border:0px")
-        self.label_2.setStyleSheet("background-color:rgb(0, 100, 100, 255);color:rgb(255, 255, 255, 255);border:0px")
+        self.label.setStyleSheet("background-color:rgb(0, 155, 155, 255);color:rgb(255, 255, 255, 255);border:0px;border-radius:4px")
+        self.label_2.setStyleSheet("background-color:rgb(0, 100, 100, 255);color:rgb(255, 255, 255, 255);border:0px;border-radius:4px")
         # self.label.setFixedSize(120, 20)
         # self.label_2.setFixedSize(120, 20)
 

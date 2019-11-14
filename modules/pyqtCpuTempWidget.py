@@ -10,16 +10,16 @@ except ImportError:
 
 sys.path.append(os.getcwd())
 try:
-    import cpumeminfo
+    import temperatures
 except ImportError:
-    print("cpumeminfo modules not found!")
+    print("temperature modules not found!")
     exit()
 
-class MonitorCPUMem(QWidget):
+class MCpuTemp(QWidget):
     def __init__(self, parent = None):
         super().__init__(parent)
         self.setupUi()
-        self.m_CpuMemInfo = cpumeminfo.CpuMemInfo()
+        self.m_Temperature = temperatures.Temperature()
 
     def setupUi(self):
         # self.setObjectName("Monitor")
@@ -54,16 +54,10 @@ class MonitorCPUMem(QWidget):
         # self.label.setText("")
         # self.label.setObjectName("label")
         self.gridLayout.addWidget(self.label, 0, 0, 1, 1)
-        self.label_2 = QtWidgets.QLabel(self)
-        # self.label_2.setText("")
-        # self.label_2.setObjectName("label_2")
-        self.gridLayout.addWidget(self.label_2, 0, 1, 1, 1)
 
         # 设置label颜色及固定大小
-        self.label.setStyleSheet("background-color:rgb(0, 255, 255, 255);color:rgb(255, 0, 255, 255);border:0px;border-radius:4px")
-        self.label_2.setStyleSheet("background-color:rgb(255, 255, 0, 255);color:rgb(255, 0, 255, 255);border:0px;border-radius:4px")
+        self.label.setStyleSheet("background-color:rgb(0, 255, 255, 255);color:rgb(100, 0, 100, 255);border:0px;border-radius:4px")
         # self.label.setFixedSize(55, 40)
-        # self.label_2.setFixedSize(35, 40)
 
         # QTimer
         self.m_timer = QtCore.QTimer()
@@ -72,17 +66,20 @@ class MonitorCPUMem(QWidget):
 
         # 为label安装事件过滤器以实现拖拽 signal and slots
         self.label.installEventFilter(self)
-        self.label_2.installEventFilter(self)
-
-    def setDisValue(self, CPUValue, MemValue):
-        self.label.setText(CPUValue)
-        self.label_2.setText(MemValue)
 
     def timeOut(self):
-        Cpuinfo = "CPU\n " + self.m_CpuMemInfo.getCpuInfo() + "%"
-        Meminfo = "Mem\n " + self.m_CpuMemInfo.getMemInfo() + "%"
-        self.label.setText(Cpuinfo)
-        self.label_2.setText(Meminfo)
+        CpuTemp = self.m_Temperature.getCpuTemp()
+        self.label.setText("CPU: " + str(CpuTemp) + "°C")
+        # set color
+        CpuTemp = 100
+        colorVal = 100 - CpuTemp
+        colorVal = 0 if colorVal < 0 else colorVal
+        colorVal = 50 if colorVal > 50 else colorVal
+        colorVal *= 2
+        colorStr = "hsl(" + str(colorVal) + ", 255, 255, 255)"
+        print(colorStr)
+        self.label.setStyleSheet("background-color:" + colorStr + ";color:rgb(100, 0, 100, 255);border:0px;border-radius:4px")
+
 
 # 以下事件函数未必在本程序中用到,放在这里只是作为学习
     def event(self, event):
@@ -90,7 +87,7 @@ class MonitorCPUMem(QWidget):
         return super().event(event)
 
     def eventFilter(self, watched, event):
-        if ((watched == self.label) or (watched == self.label_2)) :
+        if (watched == self.label) :
             if  event.type() == Qt.QEvent.MouseButtonPress :
                 # self.__mousePressPos = event.globalPos()
                 self.__mouseMovePos = event.globalPos()
@@ -120,7 +117,7 @@ class MonitorCPUMem(QWidget):
 
 def main():
     app = QApplication(sys.argv)
-    w = MonitorCPUMem()
+    w = MCpuTemp()
     w.show()
     sys.exit(app.exec_())
 

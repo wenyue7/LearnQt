@@ -5,26 +5,28 @@ try:
     from PyQt5 import Qt, QtCore, QtGui, QtWidgets
     from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget
 except ImportError:
-    print('some modules not found!')
+    print("some modules not found!")
     exit()
 
 sys.path.append(os.getcwd())
 try:
-    import netinfo
+    import temperatures
 except ImportError:
-    print('netinfo module not found!')
+    print("temperature modules not found!")
     exit()
 
-class NetTraffic(QWidget):
+class MCpuTemp(QWidget):
     def __init__(self, parent = None):
         super().__init__(parent)
         self.setupUi()
-        self.m_netTraffic = netinfo.NetTraffic()
+        self.m_Temperature = temperatures.Temperature()
 
     def setupUi(self):
-        self.setWindowTitle("NetTraffic")
+        # self.setObjectName("Monitor")
+        self.setWindowTitle("Monitor")
         # 设置窗口自适应
         self.setSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
+        # self.resize(150, 50)
         # 设置窗口
         self.setWindowFlags(Qt.Qt.FramelessWindowHint # 去掉窗体边框
             | QtCore.Qt.Tool # 隐藏任务栏图标
@@ -38,40 +40,40 @@ class NetTraffic(QWidget):
         
         # 添加组件
         self.gridLayout = QtWidgets.QGridLayout(self)
+        self.gridLayout.setObjectName("gridLayout")
         self.gridLayout.setSpacing(0)  #消除内部组件之间的缝隙
         self.gridLayout.setContentsMargins(0, 0, 0, 0)  #消除组件的边缘
         self.label = QtWidgets.QLabel(self)
         self.gridLayout.addWidget(self.label, 0, 0, 1, 1)
-        self.label_2 = QtWidgets.QLabel(self)
-        self.gridLayout.addWidget(self.label_2, 1, 0, 1, 1)
 
         # 设置label颜色及固定大小
-        self.label.setStyleSheet("background-color:rgb(0, 155, 155, 255);color:rgb(255, 255, 255, 255);border:0px;border-radius:6px")
-        self.label_2.setStyleSheet("background-color:rgb(0, 100, 100, 255);color:rgb(255, 255, 255, 255);border:0px;border-radius:6px")
+        self.label.setStyleSheet("background-color:rgb(0, 255, 255, 255);color:rgb(100, 0, 100, 255);border:0px;border-radius:4px")
+        # self.label.setFixedSize(55, 40)
 
         # QTimer
         self.m_timer = QtCore.QTimer()
         self.m_timer.timeout.connect(self.timeOut)
         self.m_timer.start(200) # ms
 
+        # 为label安装事件过滤器以实现拖拽 signal and slots
+        self.label.installEventFilter(self)
+
     def timeOut(self):
-        key_info, net_in, net_out, net_inSum, net_outSum = self.m_netTraffic.getRate()
-        if(int(net_inSum) > 1024):
-            net_inSum = float("%0.2f" % (net_inSum/1024))
-            download = "%-1s%s %s" % ("↓", str(net_inSum), "MB/s")
-        else:
-            download = "%-1s%s %s" % ("↓", str(net_inSum), "KB/s")
-        if(int(net_outSum) > 1024):
-            net_outSum = float("%0.2f" % (net_outSum/1024))
-            upload = "%-1s%s %s" % ("↑", str(net_outSum), "MB/s")
-        else:
-            upload = "%-1s%s %s" % ("↑", str(net_outSum), "KB/s")
-        self.label.setText(download)
-        self.label_2.setText(upload)
+        CpuTemp = self.m_Temperature.getCpuTemp()
+        self.label.setText("CPU: " + str(CpuTemp) + "°C")
+        # set color
+        CpuTemp = 100
+        colorVal = 100 - CpuTemp
+        colorVal = 0 if colorVal < 0 else colorVal
+        colorVal = 50 if colorVal > 50 else colorVal
+        colorVal *= 2
+        colorStr = "hsl(" + str(colorVal) + ", 255, 255, 255)"
+        print(colorStr)
+        self.label.setStyleSheet("background-color:" + colorStr + ";color:rgb(100, 0, 100, 255);border:0px;border-radius:4px")
 
 def main():
     app = QApplication(sys.argv)
-    w = NetTraffic()
+    w = MCpuTemp()
     w.show()
     sys.exit(app.exec_())
 
