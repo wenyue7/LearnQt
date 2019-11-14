@@ -62,13 +62,11 @@ class MCpuTemp(QWidget):
         CpuTemp = self.m_Temperature.getCpuTemp()
         self.label.setText("CPU: " + str(CpuTemp) + "°C")
         # set color
-        CpuTemp = 100
         colorVal = 100 - CpuTemp
         colorVal = 0 if colorVal < 0 else colorVal
         colorVal = 50 if colorVal > 50 else colorVal
         colorVal *= 2
         colorStr = "hsl(" + str(colorVal) + ", 255, 255, 255)"
-        print(colorStr)
         self.label.setStyleSheet("background-color:" + colorStr + ";color:rgb(100, 0, 100, 255);border:0px;border-radius:4px")
 
 def main():
