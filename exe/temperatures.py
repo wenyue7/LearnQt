@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 try:
-    import os,datetime,time
+    import sys,os,datetime,time
     import psutil
     from PyQt5.QtCore import QThread
 except ImportError:
